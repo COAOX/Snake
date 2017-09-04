@@ -1,14 +1,14 @@
-##################################################
-#  1er Proyecto de OrganizaciÛn del Computador  #
-#                Snake Version 1.3              #
-#          Germano Rojas & JosÈ Quevedo         #
+#################################################
+#  1er Proyecto de Organizaci√≥n del Computador  #
+#                Snake Version  2.0             #
+#          Germano Rojas & Jos√© Quevedo         #
 #               Teclas para usar:               #  
-#                  w (Arriba)                   #
-#                  s (Abajo)                    #
-#                 a (Derecha)                   #
-#                d (Izquierda)                  #
-#                 p (Pausar)                    #
-#                r (Reiniciar)                  #
+#                  w (Arriba/up)                #
+#                  s (Abajo/down)               #
+#                 a (Derecha/right)             #
+#                d (Izquierda/left)             #
+#                 p (Pausar/pause)              #
+#                r (Reiniciar/restar)           #
 #################################################
 
 #########################################################
@@ -18,14 +18,14 @@
 # 3.  $t2 Contador de cuadritos para el snake           #
 # 4.  $t3 Indice para el movimiento                     #
 # 5.  $t4 Indice para borrar                            #
-# 6.  $t5 Contiene la DirerecciÛn del movimiento        #
+# 6.  $t5 Contiene la Direrecci√≥n del movimiento        #
 # 7.  $t6 Para manejar la velocidad                     #
 # 8.  $t7 Auxiliar para las colisiones                  #
 # 9.  $t8 Auxiliar                                      #
 # 10. $t9 Para el Manejo del tiempo                     #
 # 11. $s0 Acumulador del puntaje                        #
 # 12. $s1 Lleva el conteo de las vidas                  #    
-# 13. $s3 Lleva el tamaÒo del snake                     #
+# 13. $s3 Lleva el tama√±o del snake                     #
 #                                                       #
 #                      Indices                          #
 #                                                       #
@@ -50,7 +50,7 @@ principio:
 	Ccambur:  .word 0x00FFFF00 # Amarillo
 	Cnaranja: .word 0x00FFA500 # Naraja
 	Cmora: 	  .word 0x004400FF # Azul
-	Cpopo: 	  .word 0x00794900 # MarrÛn
+	Cpopo: 	  .word 0x00794900 # Marr√≥n
 	Cpiedras: .word 0x00808080 # Gris
 	
 	TiempoI:   .word 0
@@ -71,7 +71,7 @@ principio:
 .text
 macros:
 
-# InstrucciÛn para "pintar" los bordes del tablero #
+# Instrucci√≥n para "pintar" los bordes del tablero #
 .macro bordes
 	li $t0, 0				# Registro auxiliar para indice de inicio del tablero
 	
@@ -79,8 +79,8 @@ macros:
 	fondo:
 		lw   $t1, Cfondo		# Obtiene el color del fondo
 		sw   $t1, tablero($t0)		# Guarda en el tablero dicho color
-		addi $t0, $t0, 4		# Se posiciona en la siguiente posiciÛn a "pintar" 
-		blt  $t0, 16384, fondo		# CondiciÛn para que solamente utilice el espacio necesario para el tablero
+		addi $t0, $t0, 4		# Se posiciona en la siguiente posici√≥n a "pintar" 
+		blt  $t0, 16384, fondo		# Condici√≥n para que solamente utilice el espacio necesario para el tablero
 	
 	li $t0, 0				# Registro auxiliar para indice de inicio del tablero
 	
@@ -88,21 +88,21 @@ macros:
 	horizontal:
 		lw   $t1, Cborde		# Obtiene el color del borde
 		sw   $t1, tablero($t0) 		# Guarda en el tablero dicho color
-		addi $t0, $t0, 4		# Se posiciona en la siguiente posiciÛn a "pintar" 
-		blt  $t0, 1024, horizontal	# CondiciÛn que permite pintar solamente la parte superior del tablero
-		beq  $t0, 16384, finalbordes	# ⁄ltimo recuadro del borde a pintar
-		bge  $t0, 16128, horizontal	# CondiciÛn para pintar el borde inferior del tablero
+		addi $t0, $t0, 4		# Se posiciona en la siguiente posici√≥n a "pintar" 
+		blt  $t0, 1024, horizontal	# Condici√≥n que permite pintar solamente la parte superior del tablero
+		beq  $t0, 16384, finalbordes	# √öltimo recuadro del borde a pintar
+		bge  $t0, 16128, horizontal	# Condici√≥n para pintar el borde inferior del tablero
 	
 	vertical:
 		# Borde lateral izquierdo #
 		lw   $t1, Cborde		# Obtiene el color del borde
 		sw   $t1, tablero($t0)		# Guarda en el tablero dicho color
-		add  $t0, $t0, 252		# Se posiciona en la siguiente posiciÛn a "pintar" 
+		add  $t0, $t0, 252		# Se posiciona en la siguiente posici√≥n a "pintar" 
 		# Borde lateral derecho #
 		lw   $t1, Cborde		# Obtiene el color del borde
 		sw   $t1, tablero($t0)		# Guarda en el tablero dicho color
-		add  $t0, $t0, 4		# Se posiciona en la siguiente posiciÛn a "pintar" 
-		blt  $t0, 16128, vertical	# En caso de no llegar al primer recuadro del borde inferior, contin˙a con los laterales
+		add  $t0, $t0, 4		# Se posiciona en la siguiente posici√≥n a "pintar" 
+		blt  $t0, 16128, vertical	# En caso de no llegar al primer recuadro del borde inferior, contin√∫a con los laterales
 		b horizontal			# En caso de llegar al primer recuadro del borde inferior, salta a "horizontal"
 	finalbordes:
 	.end_macro
@@ -119,7 +119,7 @@ macros:
 		add $s0, $s0, $arg 		# Al registro de puntaje le suma los puntos especificados por $arg
 	.end_macro
 	
-	#  Esta macro arma el snake dado el tamaÒo deseado, puede mandar el tamaÒo como un ope inmediato o como un registro  #
+	#  Esta macro arma el snake dado el tama√±o deseado, puede mandar el tama√±o como un ope inmediato o como un registro  #
 	.macro Armar(%arg)
 	li   $t3, 8064				# Punto de comienzo del snake
 	armar: 
@@ -129,15 +129,15 @@ macros:
 		lw $t8, movimiento		# Se obtiene el byte 
 		sll $t8, $t8, 24		# Se corren 24 bits para poder guardar el color del Snake junto con la referencia a movimiento
 		lw   $t1, Csnake		# Se obtiene el color del Snake
-		add   $t1, $t1, $t8		# Se le aÒade al byte corrido para guardarlo en el tablero
+		add   $t1, $t1, $t8		# Se le a√±ade al byte corrido para guardarlo en el tablero
 		sw   $t1, tablero($t3)		# Se guarda en el tablero
 		
 		addi $t3, $t3, 4 		# $t3 funciona como indice para construir el snake, se aumente en 4 para ir con el oro cuadro
 		addi $t2, $t2, 1		# $t2 funciona como contador para saber cuantos cuadros falta por llenar
-		blt  $t2, %arg, armar		# CondiciÛn para seguir "pintando" cuadros en el tablero
-		subi $t3, $t3, 4		# Posiciona el indice de la cabeza del snake en la posiciÛn del ˙ltimo cuadro "pintado" (la cabeza)
+		blt  $t2, %arg, armar		# Condici√≥n para seguir "pintando" cuadros en el tablero
+		subi $t3, $t3, 4		# Posiciona el indice de la cabeza del snake en la posici√≥n del √∫ltimo cuadro "pintado" (la cabeza)
 		li   $t8, 64			# Proporciona un numero en ascii neutral para empezar a hacer el movimiento hacia la derecha desde el inicio
-		sw   $t8, 0xFFFF0004		# Guarda dicho n˙mero
+		sw   $t8, 0xFFFF0004		# Guarda dicho n√∫mero
 	.end_macro
 	
 	#  Esta Macro pinta la cantidad de Vidas en el Tablero  #
@@ -167,7 +167,7 @@ macros:
 	
 	#  Divide el tiempo de espera entre 5 y eso permite aumentar la veloidad del movimiento   #
 	.macro aumentarVelocidad
-		# Si la velocidad es divible entre 5, la reduce, sino llegÛ al m·ximo
+		# Si la velocidad es divible entre 5, la reduce, sino lleg√≥ al m√°ximo
 		bgtz $t6, aumentar 		# Comprueba que la velocidad actual sea mayor a 0
 		b terminarMacro
 		aumentar:
@@ -176,13 +176,13 @@ macros:
 			rem $t8, $t6, 5
 			bgtz $t8, terminarMacro
 			
-			div $t8, $t6, 5		# Realiza la divisiÛn
-			sub $t6, $t6, $t8	# Sustrae el resultado de la divisiÛn a la velocidad actual
+			div $t8, $t6, 5		# Realiza la divisi√≥n
+			sub $t6, $t6, $t8	# Sustrae el resultado de la divisi√≥n a la velocidad actual
 		terminarMacro:		
 	.end_macro
 	
 	#  Genera las Frutas y las coloca aleatoriamente en el Tablero  #
-	#  Falta verificar que no haya nada en la posiciÛn generada :|
+	#  Falta verificar que no haya nada en la posici√≥n generada :|
 	.macro frutasRandom
 	li $t8, 0				# Registro auxiliar a usarse luego
 	loopCantidadFRandom:
@@ -193,38 +193,38 @@ macros:
 		li   $v0, 42
 		syscall
 		move $t9, $a0
-		blt $t9, 2, loopCantidadFRandom 	# CondiciÛn para obtener m·s de dos frutas como mÌnimo
+		blt $t9, 2, loopCantidadFRandom 	# Condici√≥n para obtener m√°s de dos frutas como m√≠nimo
 		
-		li $s5, 0				# Registro utilizado para contar cu·ntas frutas se han colocado en el tablero
+		li $s5, 0				# Registro utilizado para contar cu√°ntas frutas se han colocado en el tablero
 		
 	loopCantidadF:
-	# Instrucciones para obtener la posiciÛn donde se colocar·n las frutas #
+	# Instrucciones para obtener la posici√≥n donde se colocar√°n las frutas #
 	loopRandom:
-		# Se obtiene la posiciÛn aleatoria #
+		# Se obtiene la posici√≥n aleatoria #
 		li   $a0, 1 
 		li   $a1, 4031
 		li   $v0, 42
 		syscall
 		move $t7, $a0
-		mul  $t7, $t7, 4		# El n˙mero de la posiciÛn debe ser m˙ltiplo de 4
-		blt  $t7, 1024, loopRandom 	# La posiciÛn debe estar debajo del borde superior, es decir en el tablero
+		mul  $t7, $t7, 4		# El n√∫mero de la posici√≥n debe ser m√∫ltiplo de 4
+		blt  $t7, 1024, loopRandom 	# La posici√≥n debe estar debajo del borde superior, es decir en el tablero
 		
-		# Evalua si en la posiciÛn establecida hay alg˙n otro objeto #
+		# Evalua si en la posici√≥n establecida hay alg√∫n otro objeto #
 		lw $t1, Cfondo
 		lw $t8, tablero($t7)
 		bne $t8, $t1, loopRandom
 		
-	# DeterminaciÛn aleatoria de cu·l furta colocar #	
+	# Determinaci√≥n aleatoria de cu√°l furta colocar #	
 	fruticasRandom:
 	especiales:
-		rem  $t8, $s3, 3	# Como es una fruta especial, la condicion especial es que si el tamaÒo del Snake es m˙ltiplo de 3, se pueden colocar moras
-		beqz $t8, mora		# En caso que si sea m˙ltiplo de 3, se coloca la mora	
+		rem  $t8, $s3, 3	# Como es una fruta especial, la condicion especial es que si el tama√±o del Snake es m√∫ltiplo de 3, se pueden colocar moras
+		beqz $t8, mora		# En caso que si sea m√∫ltiplo de 3, se coloca la mora	
 		
-		rem  $t8, $s3, 5	# Como es un objeto especial, la condicion especial es que si el tamaÒo del Snake es m˙ltiplo de 5, se pueden colocar popos
-		beqz $t8, popo		# En caso que si sea m˙ltiplo de 5, se coloca el popo que restar· 5 pts. al puntaje
+		rem  $t8, $s3, 5	# Como es un objeto especial, la condicion especial es que si el tama√±o del Snake es m√∫ltiplo de 5, se pueden colocar popos
+		beqz $t8, popo		# En caso que si sea m√∫ltiplo de 5, se coloca el popo que restar√° 5 pts. al puntaje
 		
 	normales:
-		# Las frutas normales se manejan con un n˙mero aleatorio del 0 al 3"
+		# Las frutas normales se manejan con un n√∫mero aleatorio del 0 al 3"
 		li   $a0, 1
 		li   $a1, 4
 		li   $v0, 42
@@ -257,8 +257,8 @@ macros:
 			sw $t1, tablero($t7)
 			b normales
 		finMacroFrutasR:
-		addi $s5, $s5, 1		# Contador para saber cu·ntas frutas se han colocado
-		blt $s5, $t9, loopCantidadF	# CondiciÛn para colocar todas las frutas
+		addi $s5, $s5, 1		# Contador para saber cu√°ntas frutas se han colocado
+		blt $s5, $t9, loopCantidadF	# Condici√≥n para colocar todas las frutas
 	.end_macro
 	
 	#  Genera Obstaculos y los coloca aleatoriamente en el Tablero  #
@@ -276,7 +276,7 @@ macros:
 		beqz $t9, loopcantidadRandom
 		bgt  $t9, 10, loopcantidadRandom
 		
-		li $s5, 0 			# Registro auxiliar para saber cuantos obst·culos se han colocado
+		li $s5, 0 			# Registro auxiliar para saber cuantos obst√°culos se han colocado
 		
 		loopCantidadO:
 		
@@ -284,13 +284,13 @@ macros:
 		li   $t8, 0
 		li   $t0, 0
 		
-		#  Genera el tamaÒo de los obstaculos de forma aleatoria
+		#  Genera el tama√±o de los obstaculos de forma aleatoria
 		li   $a0, 1
-		li   $a1, 8				# El tamaÒo est· limitado por 8 cuadros
+		li   $a1, 8				# El tama√±o est√° limitado por 8 cuadros
 		li   $v0, 42
 		syscall
 		move $t0, $a0
-		beqz $t0, looptamanioRandom		# El tamaÒo no puede ser igual a 0
+		beqz $t0, looptamanioRandom		# El tama√±o no puede ser igual a 0
 		
 		#  Genera la posicion aleatoria
 		loopRandomO:
@@ -299,37 +299,37 @@ macros:
 		li   $v0, 42
 		syscall
 		move $t7, $a0
-		mul  $t7, $t7, 4			# La posiciÛn debe ser m˙ltiplo de 4
-		blt  $t7, 1024, loopcantidadRandom	# En caso de arrojar una posiciÛn en el borde superior, buscar otra posiciÛn
-		sw   $t7, auxiliar			# Guarda la posiciÛn en memoria para usarla despuÈs
+		mul  $t7, $t7, 4			# La posici√≥n debe ser m√∫ltiplo de 4
+		blt  $t7, 1024, loopcantidadRandom	# En caso de arrojar una posici√≥n en el borde superior, buscar otra posici√≥n
+		sw   $t7, auxiliar			# Guarda la posici√≥n en memoria para usarla despu√©s
 		
 		li $t2, 0				# Contador de piezas colocadas
 		
-		# Comprueba si hay alg˙n objeto que interfiera en el espacio del obst·culo #
+		# Comprueba si hay alg√∫n objeto que interfiera en el espacio del obst√°culo #
 		comprobar:
 		lw   $t1, Cfondo			# Obtiene el color del fondo
-		lw   $t8, tablero($t7)			# Obtiene el color del tablero en la posiciÛn a poner el obst·culo
+		lw   $t8, tablero($t7)			# Obtiene el color del tablero en la posici√≥n a poner el obst√°culo
 		bne  $t8, $t1, loopcantidadRandom	# Compara para saber si hay algun objeto en el lugar
 		
-		addi $t2, $t2, 1			# Contador para saber cu·ntas piezas del obst·culo se han evaluado
+		addi $t2, $t2, 1			# Contador para saber cu√°ntas piezas del obst√°culo se han evaluado
 		addi $t7, $t7, 4			# Mueve el indice de posicionamiento para evaluar la siguiente pieza
-		ble  $t2, $t0, comprobar		# ConidiciÛn para saber si faltan piezas por evaluar
+		ble  $t2, $t0, comprobar		# Conidici√≥n para saber si faltan piezas por evaluar
 		
-		li $t8, 0				# Contador para saber cuant·s piezas faltan por colocar
-		lw $t7, auxiliar			# Obtiene la posiciÛn inicial del obst·culo
+		li $t8, 0				# Contador para saber cuant√°s piezas faltan por colocar
+		lw $t7, auxiliar			# Obtiene la posici√≥n inicial del obst√°culo
 		
-		# Una vez que se comprueba que el espacio total para poner el obst·culo est· libre, se coloca el obst·culo #
+		# Una vez que se comprueba que el espacio total para poner el obst√°culo est√° libre, se coloca el obst√°culo #
 		
 		loopTamanioO:
-		lw   $t1, Cpiedras			# Obtiene el color del obst·culo	
+		lw   $t1, Cpiedras			# Obtiene el color del obst√°culo	
 		sw   $t1, tablero($t7)			# Guarda el color en el tablero
 		addi $t7, $t7, 4			# Aumenta el indice de posicionamiento
 		addi $t8, $t8, 1			# Aumenta el contador
 		blt  $t8, $t0, loopTamanioO 		# Loop para saber si ya las piezas se colocaron en su totalidad
 		
-		# Averigua si faltan obst·culos por colocar #
-		addi $s5, $s5, 1			# Aumenta el contador de obst·culo por colocar en total
-		ble $s5, $t9, loopCantidadO		# Loop para saber si ya los obst·culos se colocaron en su totalidad
+		# Averigua si faltan obst√°culos por colocar #
+		addi $s5, $s5, 1			# Aumenta el contador de obst√°culo por colocar en total
+		ble $s5, $t9, loopCantidadO		# Loop para saber si ya los obst√°culos se colocaron en su totalidad
 		
 	.end_macro	
 	
@@ -338,7 +338,7 @@ macros:
 		inicioM:
 		
 		colision($arg)		# Intrucciones de colisiones
-		li $t8, 0		# Registro auxiliar, se usar· luego
+		li $t8, 0		# Registro auxiliar, se usar√° luego
 		
 		beq $arg, 4, der	# En caso de quereserse mover a la derecha ($arg = 4), saltar a der
 		beq $arg, -4, izq	# En caso de quereserse mover a la derecha ($arg = -4), saltar a izq
@@ -374,28 +374,28 @@ macros:
 		# Instrucciones para guardar el movimiento junto con el color del Snake #
 		moveS:	
 		lw $t1, movimiento	# Se obtiene la palabra de "movimiento" en este caso el numero de referencia
-		sll $t1, $t1, 24	# Dicha palabra se corre 24 bits para colocar el byte de referencia m·s hacia la izquierda (*)
+		sll $t1, $t1, 24	# Dicha palabra se corre 24 bits para colocar el byte de referencia m√°s hacia la izquierda (*)
 		lw $t7, Csnake
 		
 		# (*) Se hace esto debido a que para "pintar" el tablero, el sistema lee los ultimos 3 bytes de izquierda a derecha, los byte del color #  
 		
-		add $t1, $t1, $t7	# Se aÒade el color al numero de referencia corrido
+		add $t1, $t1, $t7	# Se a√±ade el color al numero de referencia corrido
 		sw $t1, tablero($t3)	# Se guarda el movimiento y el color en el tablero
 		
-		add $t3, $t3, $arg	# Se le suma al indice de la cabeza del snake el numero dependiendo de cu·l es el movimiento que se quiere, de tal forma lo realiza
+		add $t3, $t3, $arg	# Se le suma al indice de la cabeza del snake el numero dependiendo de cu√°l es el movimiento que se quiere, de tal forma lo realiza
 		
 		sw   $t1, tablero($t3)	# Se guarda el color del Snake en el recuadro del tablero dependiendo de $t3
 		
-		beqz $t0, tiempo	# En caso que no sea necesario aumentar el tamaÒo del Snake, se salta a "tiempo"
-			# En caso de aumentar el tamaÒo del snake se realiza lo siguiente #
+		beqz $t0, tiempo	# En caso que no sea necesario aumentar el tama√±o del Snake, se salta a "tiempo"
+			# En caso de aumentar el tama√±o del snake se realiza lo siguiente #
 			addi $t8, $t8, 1	# $t8 funciona como contador
-			ble  $t8, $t0, moveS	# Hasta que el contador no alcance el tamaÒo de la serpiente, esta no acceder· a las instrucciones de borrado por lo que "aumentar·" de tamaÒo
+			ble  $t8, $t0, moveS	# Hasta que el contador no alcance el tama√±o de la serpiente, esta no acceder√° a las instrucciones de borrado por lo que "aumentar√°" de tama√±o
 		
-		# Determina su movimiento en relaciÛn al tiempo (velocidad) #
+		# Determina su movimiento en relaci√≥n al tiempo (velocidad) #
 		tiempo:
 			# Sleep que determina esta velocidad
 		li   $v0, 32
-		la   $a0, ($t6)	# $t6 establece los milisegundos que se "dormir·" el proceso
+		la   $a0, ($t6)	# $t6 establece los milisegundos que se "dormir√°" el proceso
 		syscall
 		
 		
@@ -403,39 +403,39 @@ macros:
 		lw   $t1, Csnake # Obtiene el color del Snake para compararlo posteriormente
 		li   $t8, 0
 		
-		lw   $t8, tablero($t4)	# Obtiene lo que est· contenido en el tablero en la posiciÛn establecida por el indice de borrado o cola ($t4)
+		lw   $t8, tablero($t4)	# Obtiene lo que est√° contenido en el tablero en la posici√≥n establecida por el indice de borrado o cola ($t4)
 		
-		# CondiciÛn para realizar el borrado #
+		# Condici√≥n para realizar el borrado #
 		derecha:
 		li   $t7, 4 			# Numero a sumarse para ir a la derecha
-		beq $t8, 25198592, borrar 	# Si el numero guardado en la posiciÛn del tablero dada por el Ìndice es igual al mostrado, borrar hacia la derecha
+		beq $t8, 25198592, borrar 	# Si el numero guardado en la posici√≥n del tablero dada por el √≠ndice es igual al mostrado, borrar hacia la derecha
 		
 		izquierda:			
 		li $t7, -4			# Numero a sumarse para ir a la izquierda
-		beq $t8, 41975808, borrar	# Si el numero guardado en la posiciÛn del tablero dada por el Ìndice es igual al mostrado, borrar hacia la izquierda
+		beq $t8, 41975808, borrar	# Si el numero guardado en la posici√≥n del tablero dada por el √≠ndice es igual al mostrado, borrar hacia la izquierda
 		
 		abajo:
 		li   $t7, 256			# Numero a sumarse para ir a la abajo
-		beq $t8, 58753024, borrar	# Si el numero guardado en la posiciÛn del tablero dada por el Ìndice es igual al mostrado, borrar hacia la abajo
+		beq $t8, 58753024, borrar	# Si el numero guardado en la posici√≥n del tablero dada por el √≠ndice es igual al mostrado, borrar hacia la abajo
 		
 		arriba:
 		li   $t7, -256			# Numero a sumarse para ir a la arriba
-		beq  $t8, 75530240, borrar	# Si el numero guardado en la posiciÛn del tablero dada por el Ìndice es igual al mostrado, borrar hacia la arriba
+		beq  $t8, 75530240, borrar	# Si el numero guardado en la posici√≥n del tablero dada por el √≠ndice es igual al mostrado, borrar hacia la arriba
 		
-		# InstrucciÛn de borrado, de tal forma se da ilusiÛn de movimiento dle snake #
+		# Instrucci√≥n de borrado, de tal forma se da ilusi√≥n de movimiento dle snake #
 		borrar: 	
 			lw   $t1, Cfondo	# Obtiene el color del fondo del tablero
-			sw   $t1, tablero($t4)	# Guarda dicho color en la posiciÛn que se desea borrar
-			add  $t4, $t4, $t7	# Cambia el Ìndice de borrado o cola para la proxima posiciÛn a evaluar
+			sw   $t1, tablero($t4)	# Guarda dicho color en la posici√≥n que se desea borrar
+			add  $t4, $t4, $t7	# Cambia el √≠ndice de borrado o cola para la proxima posici√≥n a evaluar
 	.end_macro 
  
 	#  Verifica si el snake choco contra un borde o un obstaculo  #
 	.macro colision($arg)
 		#  Carga el color que esta proximo a la cabeza del snake  #
-		add  $t3, $t3, $arg		# Obtiene el espacio prÛximo, seg˙n el movimiento, para saber si hay algo	
+		add  $t3, $t3, $arg		# Obtiene el espacio pr√≥ximo, seg√∫n el movimiento, para saber si hay algo	
 		lw   $t1, tablero($t3)		# Obtiene el color de ese espacio
 		
-		sub  $t3, $t3, $arg		# Devuelve a la posiciÛn de antes
+		sub  $t3, $t3, $arg		# Devuelve a la posici√≥n de antes
 		
 		lw   $t7, Cborde          #  Carga el color del borde   
 		beq  $t7, $t1, pierdeVida #  Descuenta una Vida y reinicia al snake 
@@ -447,7 +447,7 @@ macros:
 		beq  $t1, $t7, pierdeVida #  Descuenta una Vida y reinicia al snake
 		
 		
-		li   $t0, 0		  #  Se usa $t0 como registro auxiliar que permita determinar que tanto se aumenta el tamaÒo del snake  #
+		li   $t0, 0		  #  Se usa $t0 como registro auxiliar que permita determinar que tanto se aumenta el tama√±o del snake  #
 		
 		lw   $t7, Cfondo          #  Carga el color del fondo 
 		beq  $t1, $t7, finalMacro #  Termina la macro si no choco 
@@ -455,31 +455,31 @@ macros:
 		# En caso de "colisionar" o comer una fruta #
 		lw   $t7, Cpatilla		# Obtiene el color de la fruta 
 		li   $t0, 5			# Numero de cuadros extras en el Snake
-		addi $s3, $s3, 5		# Conserva el numero de cuadros que forman el snake, ˙til para obtener un puntaje mayor dependiendo del tamaÒo del snake
-		beq  $t1, $t7, finalMacro	# Salta las demas condiciones, en caso que esta estÈ acertada
+		addi $s3, $s3, 5		# Conserva el numero de cuadros que forman el snake, √∫til para obtener un puntaje mayor dependiendo del tama√±o del snake
+		beq  $t1, $t7, finalMacro	# Salta las demas condiciones, en caso que esta est√© acertada
 		
 		lw   $t7, Ccambur		# Obtiene el color de la fruta 
 		li   $t0, 4			# Numero de cuadros extras en el Snake
-		addi $s3, $s3, 4		# Conserva el numero de cuadros que forman el snake, ˙til para obtener un puntaje mayor dependiendo del tamaÒo del snake
-		beq  $t1, $t7, finalMacro	# Salta las demas condiciones, en caso que esta estÈ acertada
+		addi $s3, $s3, 4		# Conserva el numero de cuadros que forman el snake, √∫til para obtener un puntaje mayor dependiendo del tama√±o del snake
+		beq  $t1, $t7, finalMacro	# Salta las demas condiciones, en caso que esta est√© acertada
 		
 		lw   $t7, Cnaranja		# Obtiene el color de la fruta
 		li   $t0, 3			# Numero de cuadros extras en el Snake
-		addi $s3, $s3, 3		# Conserva el numero de cuadros que forman el snake, ˙til para obtener un puntaje mayor dependiendo del tamaÒo del snake
-		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta estÈ acertada
+		addi $s3, $s3, 3		# Conserva el numero de cuadros que forman el snake, √∫til para obtener un puntaje mayor dependiendo del tama√±o del snake
+		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta est√© acertada
 		
 		lw   $t7, Cmora			# Obtiene el color de la fruta
 		li   $t0, 10			# Numero de cuadros extras en el Snake
-		addi $s3, $s3, 10		# Conserva el numero de cuadros que forman el snake, ˙til para obtener un puntaje mayor dependiendo del tamaÒo del snake
-		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta estÈ acertada
+		addi $s3, $s3, 10		# Conserva el numero de cuadros que forman el snake, √∫til para obtener un puntaje mayor dependiendo del tama√±o del snake
+		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta est√© acertada
 		
 		lw   $t7, Cpopo			# Obtiene el color del objeto
 		li   $t0, 1			# Numero de cuadros extras en el Snake
 		subi $s0, $s0, 5		# Resta 5 puntos
-		addi $s3, $s3, 1		# Conserva el numero de cuadros que forman el snake, ˙til para obtener un puntaje mayor dependiendo del tamaÒo del snake
-		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta estÈ acertada
+		addi $s3, $s3, 1		# Conserva el numero de cuadros que forman el snake, √∫til para obtener un puntaje mayor dependiendo del tama√±o del snake
+		beq  $t1, $t7, finalMacro 	# Salta las demas condiciones, en caso que esta est√© acertada
 		
-		# Intrucciones en caso que haya una colisiÛn #
+		# Intrucciones en caso que haya una colisi√≥n #
 		pierdeVida:
 			
 			subi $s1, $s1, 1			# Resta una vida
@@ -493,7 +493,7 @@ macros:
 				sw   $t7, tablero+524
 				sw   $t7, tablero+528
 				ble  $s1, 1, dos		# En caso que sea la segunda vida perdida, salta a "dos"
-				b loopVidas			# Contin˙a
+				b loopVidas			# Contin√∫a
 			dos: 
 				li   $t7, 0
 				# Resta el segundo recuadro de las vidas #
@@ -502,7 +502,7 @@ macros:
 				sw   $t7, tablero+536
 				sw   $t7, tablero+540
 				beq  $s1, 0, tres		# En caso que sea la tercera vida perdida, salta a "tres"
-				b loopVidas			# Contin˙a
+				b loopVidas			# Contin√∫a
 			tres: 
 				li   $t7, 0
 				# Resta el segundo recuadro de las vidas #
@@ -510,13 +510,13 @@ macros:
 				sw   $t7, tablero+296
 				sw   $t7, tablero+548
 				sw   $t7, tablero+552
-				b reiniciar			# En este caso ya no quedan m·s vidas asi que salta a la pregunta de reiniciar o no
+				b reiniciar			# En este caso ya no quedan m√°s vidas asi que salta a la pregunta de reiniciar o no
 		finalMacro:
 		SumarPuntaje ($t0)				# En caso de obtener puntaje, lo suma
 		
 	.end_macro
 	
-	# Macro para reestablecer las condiciones del tablero sin obst·culos o frutas #
+	# Macro para reestablecer las condiciones del tablero sin obst√°culos o frutas #
 	.macro reestablecer
 		
 		li $t8, 1024
@@ -528,16 +528,16 @@ macros:
 		beq $t0, $t1, saltar
 		
 		# Cuadros que no deben ser "borrados" del tablero #
-		li $t7, 25198592		# Numero resultante de la suma del numero decimal m·s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
+		li $t7, 25198592		# Numero resultante de la suma del numero decimal m√°s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
 		beq $t0, $t7, saltar
 		
-		li $t7, 41975808		# Numero resultante de la suma del numero decimal m·s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
+		li $t7, 41975808		# Numero resultante de la suma del numero decimal m√°s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
 		beq $t0, $t7, saltar
 		
-		li $t7, 58753024		# Numero resultante de la suma del numero decimal m·s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
+		li $t7, 58753024		# Numero resultante de la suma del numero decimal m√°s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
 		beq $t0, $t7, saltar
 		
-		li $t7, 75530240		# Numero resultante de la suma del numero decimal m·s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
+		li $t7, 75530240		# Numero resultante de la suma del numero decimal m√°s el numero usado para referenciarse al respectivo movimiento (ver Macro de movimiento)
 		beq $t0, $t7, saltar	
 		
 		lw $t7, Cborde			# Color del borde #
@@ -547,7 +547,7 @@ macros:
 		pintar:
 		sw $t1, tablero($t8)
 		
-		# En caso de presentarse alg˙n objeto que se debe conservar en el tablero, se salta al siguiente recuadro #
+		# En caso de presentarse alg√∫n objeto que se debe conservar en el tablero, se salta al siguiente recuadro #
 		saltar:
 		addi $t8, $t8, 4
 		blt $t8, 16124, inicioRes
@@ -613,7 +613,7 @@ main:
 				beq  $t9, 97, izquierda		#  Movimiento hacia la izquierda
 				
 				
-				## En caso que se teclee alguna tecla errÛnea el juego continuar· sin alteraciones ##
+				## En caso que se teclee alguna tecla err√≥nea el juego continuar√° sin alteraciones ##
 				bne  $t9, 72, siga2 	
 				bne  $t9, 70, siga2
 				bne  $t9, 112, siga2
@@ -635,28 +635,28 @@ main:
 				
 				# Instrucciones de movimiento
 				arriba:
-					beq $s4, 256, siga2	# CondiciÛn para que no vaya en sentido contrario
-					li $s4, -256		# Se resta 256 a la posiciÛn actual para que suba el cuadrito
-					b siga2			# Contin˙a
+					beq $s4, 256, siga2	# Condici√≥n para que no vaya en sentido contrario
+					li $s4, -256		# Se resta 256 a la posici√≥n actual para que suba el cuadrito
+					b siga2			# Contin√∫a
 				abajo:
-					beq $s4, -256, siga2	# CondiciÛn para que no vaya en sentido contrario
-					li $s4, 256		# Se resta 256 a la posiciÛn actual para que suba el cuadrito
-					b siga2			# Contin˙a
+					beq $s4, -256, siga2	# Condici√≥n para que no vaya en sentido contrario
+					li $s4, 256		# Se resta 256 a la posici√≥n actual para que suba el cuadrito
+					b siga2			# Contin√∫a
 				derecha:
-					beq $s4, -4, siga2	# CondiciÛn para que no vaya en sentido contrario
-					li $s4, 4		# Se resta 256 a la posiciÛn actual para que suba el cuadrito
-					b siga2			# Contin˙a
+					beq $s4, -4, siga2	# Condici√≥n para que no vaya en sentido contrario
+					li $s4, 4		# Se resta 256 a la posici√≥n actual para que suba el cuadrito
+					b siga2			# Contin√∫a
 				izquierda:
-					beq $s4, 4, siga2	# CondiciÛn para que no vaya en sentido contrario
-					li $s4, -4		# Se resta 256 a la posiciÛn actual para que suba el cuadrito
+					beq $s4, 4, siga2	# Condici√≥n para que no vaya en sentido contrario
+					li $s4, -4		# Se resta 256 a la posici√≥n actual para que suba el cuadrito
 					b siga2
 				inicio:
-					li $s4, 4		# Se resta 256 a la posiciÛn actual para que suba el cuadrito
-					b siga2			# Contin˙a
+					li $s4, 4		# Se resta 256 a la posici√≥n actual para que suba el cuadrito
+					b siga2			# Contin√∫a
 				
-				siga2: 				# Loop para saltar cuando se sepa quÈ movimiento hacer
-				mover($s4)			# Macro de movimiento, est·n las instrucciones que permiten el movimiento del Snake
-				bnez $t0, aparicion		# En caso que se coma una fruta "apariciÛn" salta al label para limpiar el tablero
+				siga2: 				# Loop para saltar cuando se sepa qu√© movimiento hacer
+				mover($s4)			# Macro de movimiento, est√°n las instrucciones que permiten el movimiento del Snake
+				bnez $t0, aparicion		# En caso que se coma una fruta "aparici√≥n" salta al label para limpiar el tablero
 				
 				# 2da toma de tiempo
 				li   $v0, 30
@@ -691,7 +691,7 @@ main:
 				li $v0, 4
 				syscall
 				
-				sw $zero, TiempoI		# Retorna a 0 la posicion de memoria donde se guarda el tiempo para que se cuente a partir de ahÌ 10 segundos
+				sw $zero, TiempoI		# Retorna a 0 la posicion de memoria donde se guarda el tiempo para que se cuente a partir de ah√≠ 10 segundos
 				
 				blt  $t6, 200, siga		# Condicion para que la velocidad no disminuya menor a 0.20 segundos
 				aumentarVelocidad		# Aumenta la velocidad
